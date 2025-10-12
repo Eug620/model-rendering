@@ -1,13 +1,41 @@
+<!--
+ * @Author       : eug yyh3531@163.com
+ * @Date         : 2025-10-12 15:21:02
+ * @LastEditors  : eug yyh3531@163.com
+ * @LastEditTime : 2025-10-12 15:59:55
+ * @FilePath     : /model-rendering/index.html
+ * @Description  : filename
+ * 
+ * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved. 
+-->
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>model-rendering</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <title>model-rendering</title>
+  <link href="/src/styles/tailwindcss.css" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: "AlimamaFangYuanTiVF";
+      src: url("https://unpkg.com/e-cdn@1.0.0/micro-vue/AlimamaFangYuanTiVF-Thin.woff2") format("woff2"),
+        url("https://unpkg.com/e-cdn@1.0.0/micro-vue/AlimamaFangYuanTiVF-Thin.woff") format("woff"),
+        url("https://unpkg.com/e-cdn@1.0.0/micro-vue/AlimamaFangYuanTiVF-Thin.ttf") format("ttf");
+      font-display: swap;
+    }
+
+    #app {
+      font-family: AlimamaFangYuanTiVF;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-100">
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
