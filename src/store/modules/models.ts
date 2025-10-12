@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2024-05-23 23:55:32
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-13 01:28:22
+ * @LastEditTime : 2025-10-13 02:18:48
  * @FilePath     : /model-rendering/src/store/modules/models.ts
  * @Description  : filename
  *
@@ -219,6 +219,15 @@ export const useModelsStore = defineStore('app', {
                 this.scene.add(this.light);
                 this.scene.add(new THREE.PointLightHelper(this.light)) // 光源辅助器
 
+                // 添加网格线辅助（可选，用于调试或网格效果）
+                const addGridHelper = () => {
+                    const gridHelper = new THREE.GridHelper(800, 80, '#000000', '#000000');
+                    gridHelper.position.y = 0.01; // 稍微高于地板避免Z轴冲突
+                    return gridHelper;
+                }
+                this.scene.add(addGridHelper());
+
+
                 // 颜色每分钟变换一次
                 // fetch('https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/colors.json').then(async res => {
                 //     const colors = await res.json() || []
@@ -231,10 +240,6 @@ export const useModelsStore = defineStore('app', {
                 //     }, 60000)
                 // })
 
-                // 地板 - 网格
-                // const helper = new THREE.GridHelper(800, 800, '#fff', '#ccc');
-                // helper.receiveShadow = true;
-                // this.scene.add(helper);
 
                 // 地板 - 可以反光的地板
                 const PlaneGeometry = new THREE.PlaneGeometry(800, 800)
