@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2024-05-22 22:26:00
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-12 15:34:49
+ * @LastEditTime : 2025-10-13 01:24:20
  * @FilePath     : /model-rendering/src/layout/index.vue
  * @Description  : filename
  * 
@@ -25,10 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import { menus } from "@/router/routes";
-import { useRoute, useRouter } from "vue-router";
-const router = useRouter()
-const route = useRoute()
 </script>
 
 <style></style>

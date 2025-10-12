@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2025-10-12 15:31:47
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-12 16:53:54
+ * @LastEditTime : 2025-10-13 01:30:25
  * @FilePath     : /model-rendering/src/views/dashboard.vue
  * @Description  : filename
  * 
@@ -28,7 +28,7 @@ import { computed, onMounted, ref } from "vue";
 import { useModelsStore } from '@/store/modules/models'
 const modelsStore = useModelsStore()
 
-const refsThree = ref(null)
+const refsThree = ref()
 onMounted(() => {
     modelsStore.init(refsThree.value)
 })
@@ -47,6 +47,7 @@ window.addEventListener('keydown', (e: KeyboardEvent) => {
         keycode.value = e.keyCode
         modelsStore.setAnimations(0, current.index)
     }
+ 
 })
 window.addEventListener('keyup', () => {
     keycode.value = null

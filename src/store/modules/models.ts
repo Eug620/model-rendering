@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2024-05-23 23:55:32
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-12 16:11:19
+ * @LastEditTime : 2025-10-13 01:28:22
  * @FilePath     : /model-rendering/src/store/modules/models.ts
  * @Description  : filename
  *
@@ -15,7 +15,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { toRaw } from "vue";
 import Stats from 'three/addons/libs/stats.module.js';
 import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
-import { random } from 'lodash'
 
 interface Model {
     progress: number;
@@ -27,16 +26,23 @@ interface Model {
     scale: number[],
     actions: THREE.AnimationAction[]
 }
-export const useModelsStore = defineStore('app',{
+export const useModelsStore = defineStore('app', {
     state: () => ({
         loader: new FBXLoader(),
         renderer: new THREE.WebGLRenderer({ antialias: true }),
         scene: new THREE.Scene(),
         camera: new THREE.PerspectiveCamera(),
         clock: new THREE.Clock(),
-        stats: new Stats(),
+        stats: new Stats(), // FPS计数器
+        light: new THREE.PointLight('#e2e1e4', 0),
         mixer: {},
         isLoad: false,
+        // 第三人称相机跟随配置
+        cameraConfig: {
+            distance: 50,    // 相机距离角色的距离
+            height: 40,       // 相机高度
+            smoothness: 0.1  // 平滑过渡系数，值越小越平滑
+        },
         models: [
             {
                 progress: 0,
@@ -107,21 +113,22 @@ export const useModelsStore = defineStore('app',{
                 index: 4,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Jab Cross.fbx'
+                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Standing Run Left.fbx'
             },
             {
                 key: 's',
                 index: 5,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Praying.fbx'
+                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Running Backward.fbx'
+
             },
             {
                 key: 'd',
                 index: 6,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Samba Dancing.fbx'
+                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Right Strafe.fbx'
             },
             {
                 key: 'f',
@@ -130,7 +137,29 @@ export const useModelsStore = defineStore('app',{
                 progress: 0,
                 url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Whatever Gesture.fbx'
             },
-        ] as any[]
+            {
+                key: 'z',
+                index: 8,
+                instancs: null,
+                progress: 0,
+                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Praying.fbx'
+            },
+            {
+                key: 'x',
+                index: 9,
+                instancs: null,
+                progress: 0,
+                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Jab Cross.fbx'
+            },
+            {
+                key: 'c',
+                index: 10,
+                instancs: null,
+                progress: 0,
+                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Samba Dancing.fbx'
+            }
+        ] as any[],
+        checkKey: 0
     }),
     getters: {
     },
@@ -139,7 +168,7 @@ export const useModelsStore = defineStore('app',{
             Doms.append(this.renderer.domElement);
             Doms.append(this.stats.dom);
             this.stats.dom.style.position = 'fixed'
-            this.stats.dom.style.top = '3.5rem'
+            this.stats.dom.style.top = '0'
             this.stats.dom.style.bottom = '0'
 
             await Promise.all(this.keys.map((k) => {
@@ -170,7 +199,7 @@ export const useModelsStore = defineStore('app',{
 
 
 
-                this.renderer.pixelRatio = window.devicePixelRatio;
+                this.renderer.setPixelRatio(window.devicePixelRatio);
                 this.renderer.setSize(offsetWidth, offsetHeight);
 
 
@@ -182,23 +211,26 @@ export const useModelsStore = defineStore('app',{
                 this.scene.add(directionalLight);
 
 
-                const light = new THREE.PointLight('#e2e1e4', 0);
-                light.intensity = 6999
-                light.position.set(0, 60, 0);
-                light.visible = true
-                light.castShadow = true;
-                this.scene.add(light);
-                this.scene.add(new THREE.PointLightHelper(light)) // 光源辅助器
-                fetch('https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/colors.json').then(async res => {
-                    const colors = await res.json() || []
-                    if (!colors.length) return
-                    setInterval(() => {
-                        const idx = random(0, colors.length - 1)
-                        console.log(idx)
+                // const light = new THREE.PointLight('#e2e1e4', 0);
+                this.light.intensity = 6999
+                this.light.position.set(0, 60, 0);
+                this.light.visible = true
+                this.light.castShadow = true;
+                this.scene.add(this.light);
+                this.scene.add(new THREE.PointLightHelper(this.light)) // 光源辅助器
 
-                        light.color.set(colors[idx]?.hex)
-                    }, 60000)
-                })
+                // 颜色每分钟变换一次
+                // fetch('https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/colors.json').then(async res => {
+                //     const colors = await res.json() || []
+                //     if (!colors.length) return
+                //     setInterval(() => {
+                //         const idx = random(0, colors.length - 1)
+                //         console.log(idx)
+
+                //         this.light.color.set(colors[idx]?.hex)
+                //     }, 60000)
+                // })
+
                 // 地板 - 网格
                 // const helper = new THREE.GridHelper(800, 800, '#fff', '#ccc');
                 // helper.receiveShadow = true;
@@ -251,10 +283,11 @@ export const useModelsStore = defineStore('app',{
                     const material = new THREE.MeshLambertMaterial();
 
                     const mesh = new THREE.Mesh(geometry, material);
-                    mesh.rotateY(60)
+                    // mesh.rotateY(60)
                     mesh.position.y = 19;
-                    mesh.position.x = -30;
-                    mesh.position.z = -30;
+                    mesh.position.x = 50;
+                    mesh.position.z = 50;
+
                     mesh.castShadow = true;
                     mesh.receiveShadow = true;
                     this.scene.add(mesh);
@@ -267,10 +300,75 @@ export const useModelsStore = defineStore('app',{
 
 
         },
+        // 第三人称视角跟随函数 - 跟随物体
+        updateThirdPersonCamera(character: THREE.Mesh) {
+            // 计算相机在角色局部坐标系中的目标位置
+            // 这个位置在角色后方(distance)和上方(height)
+            const targetLocalPosition = new THREE.Vector3(
+                0,
+                this.cameraConfig.height,
+                -this.cameraConfig.distance
+            );
+
+            // 将局部坐标转换为世界坐标（考虑角色的旋转）
+            const targetWorldPosition = new THREE.Vector3()
+                .copy(targetLocalPosition)
+                .applyQuaternion(character.quaternion)
+                .add(character.position);
+
+            // 平滑过渡到目标位置
+            this.camera.position.lerp(targetWorldPosition, this.cameraConfig.smoothness);
+
+            // 让相机看向角色的前方一点（而不是中心点，更自然）
+            const lookAtPosition = new THREE.Vector3()
+                .set(0, 1, -2)  // 在角色前方一点
+                .applyQuaternion(character.quaternion)
+                .add(character.position);
+
+            this.camera.lookAt(lookAtPosition);
+        },
         async renderModels() {
             this.models.forEach(mod => {
                 mod.mixer?.update(this.clock.getDelta())
             })
+
+            // 按下w奔跑
+            if (this.checkKey == 1) { // w
+                this.models[0]?.model?.position?.set(
+                    this.models[0]?.model.position.x,
+                    this.models[0]?.model.position.y,
+                    this.models[0]?.model.position.z + 1
+                )
+            }
+            if (this.checkKey == 4) { // a
+                this.models[0]?.model?.position?.set(
+                    this.models[0]?.model.position.x + 1,
+                    this.models[0]?.model.position.y,
+                    this.models[0]?.model.position.z
+                )
+            }
+            if (this.checkKey == 5) {// s
+                this.models[0]?.model?.position?.set(
+                    this.models[0]?.model.position.x,
+                    this.models[0]?.model.position.y,
+                    this.models[0]?.model.position.z - 1
+                )
+            }
+            if (this.checkKey == 6) { // d
+                this.models[0]?.model?.position?.set(
+                    this.models[0]?.model.position.x - 1,
+                    this.models[0]?.model.position.y,
+                    this.models[0]?.model.position.z
+                )
+            }
+
+            // 相机跟随模型
+            this.models[0]?.model && this.updateThirdPersonCamera(this.models[0]?.model)
+
+            // 灯光跟随模型
+            this.models[0]?.model && this.light.position.set(this.models[0]?.model.position.x, 60, this.models[0]?.model.position.z);
+
+
             this.renderer?.render(
                 toRaw(this.scene),
                 toRaw(this.camera)
@@ -305,18 +403,29 @@ export const useModelsStore = defineStore('app',{
                 // console.log(this.keys[0].instancs,'>>>>')
                 this.keys.forEach(key => {
                     key.instancs.animations.forEach((item: THREE.AnimationClip) => {
+
+                        // 使用removePositionTracks函数过滤掉动画中所有控制位置的轨道（更彻底的解决方案）
+                        if (['w', 'a', 's', 'd'].includes(key.key)) {
+                            item.tracks = item.tracks.filter(track => {
+                                // 排除所有包含.position的动画轨道
+                                return !track.name.includes('.position');
+                            });
+                        }
+
+
                         model.actions[key.index] = (model.mixer as THREE.AnimationMixer).clipAction(item)
                     })
                 })
                 // model.actions.forEach(item => item.play())
-                model.actions[0].play()
+                model.actions[0]?.play()
                 this.scene.add(model.model);
                 resolve(model.model);
             });
         },
         async setAnimations(index: number, idx: number) {
             console.log('setAnimations:', index, idx)
-            this.models[index].actions.forEach((actions, i) => {
+            this.checkKey = idx
+            this.models[index]?.actions.forEach((actions, i) => {
                 if (idx !== i) {
                     actions.stop()
                 } else {

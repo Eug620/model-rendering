@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2025-10-12 15:21:02
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-12 15:56:37
+ * @LastEditTime : 2025-10-13 01:37:13
  * @FilePath     : /model-rendering/vite.config.ts
  * @Description  : filename
  * 
@@ -16,9 +16,9 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/",
+  base: `${process.env.NODE_ENV === 'production' ? 'https://eug620.github.io/model-rendering/' : '/'}`,
   plugins: [
-    vue(), 
+    vue(),
     tailwindcss()
   ],
   resolve: {
@@ -46,9 +46,7 @@ export default defineConfig({
         // 拆分js
         manualChunks: {
           three: ["three"],
-          lowdb: ["lowdb"],
-          // lodash: ["lodash"],
-          localforage: ["localforage"],
+          lodash: ["lodash"],
         },
       },
     },
