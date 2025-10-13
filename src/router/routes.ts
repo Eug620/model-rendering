@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2024-05-22 22:05:28
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-12 15:33:39
+ * @LastEditTime : 2025-10-13 13:05:44
  * @FilePath     : /model-rendering/src/router/routes.ts
  * @Description  : filename
  * 
@@ -15,7 +15,7 @@ export const menus = [
     name: "dashboard",
     meta: {
       keepAlive: true,
-      title: "首页",
+      title: "Models",
       auth: true,
       affix: true,
       icon: "",
