@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2024-05-23 23:55:32
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-13 02:18:48
+ * @LastEditTime : 2025-10-25 15:22:07
  * @FilePath     : /model-rendering/src/store/modules/models.ts
  * @Description  : filename
  *
@@ -35,7 +35,14 @@ export const useModelsStore = defineStore('app', {
         clock: new THREE.Clock(),
         stats: new Stats(), // FPS计数器
         light: new THREE.PointLight('#e2e1e4', 0),
+        group: new THREE.Group(),
         mixer: {},
+        // 动作交互&方向
+        targetRotationY: 0, // 根据鼠标位置计算目标旋转角度
+        rotateSpeed: 0.1,
+        moveDirection_ws: new THREE.Vector3(), // 存储世界空间中的前进方向
+        moveDirection_ad: new THREE.Vector3(), // 存储世界空间中的前进方向
+        // 是否已加载场景
         isLoad: false,
         // 第三人称相机跟随配置
         cameraConfig: {
@@ -180,7 +187,16 @@ export const useModelsStore = defineStore('app', {
                     resolve(null)
                 })
             }))
-            console.log(this.keys, 'this.keys')
+            // this.initAxesHelper()
+            // this.initConeGeometry()
+            this.initLight()
+            this.initPlaneGeometry()
+            this.initGridHelper()
+            // this.initDirectionalLight(new THREE.Vector3(100, 100, 100));
+            // this.initDirectionalLight(new THREE.Vector3(-100, 100, -100));
+            // this.initDirectionalLight(new THREE.Vector3(100, 100, -100));
+            // this.initDirectionalLight(new THREE.Vector3(-100, 100, 100));
+
 
             if (!this.isLoad) {
                 this.isLoad = true;
@@ -206,26 +222,9 @@ export const useModelsStore = defineStore('app', {
                 // this.scene.fog = new THREE.Fog('#ccc', 60, 60); //雾化场景
                 // this.scene.background = new THREE.Color(0xf2f5f9);
 
-                const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-                directionalLight.position.set(10, 0, 10);
-                this.scene.add(directionalLight);
 
 
                 // const light = new THREE.PointLight('#e2e1e4', 0);
-                this.light.intensity = 6999
-                this.light.position.set(0, 60, 0);
-                this.light.visible = true
-                this.light.castShadow = true;
-                this.scene.add(this.light);
-                this.scene.add(new THREE.PointLightHelper(this.light)) // 光源辅助器
-
-                // 添加网格线辅助（可选，用于调试或网格效果）
-                const addGridHelper = () => {
-                    const gridHelper = new THREE.GridHelper(800, 80, '#000000', '#000000');
-                    gridHelper.position.y = 0.01; // 稍微高于地板避免Z轴冲突
-                    return gridHelper;
-                }
-                this.scene.add(addGridHelper());
 
 
                 // 颜色每分钟变换一次
@@ -241,13 +240,6 @@ export const useModelsStore = defineStore('app', {
                 // })
 
 
-                // 地板 - 可以反光的地板
-                const PlaneGeometry = new THREE.PlaneGeometry(800, 800)
-                const MeshLambertMaterial = new THREE.MeshLambertMaterial({ color: '#f2f5f9' })
-                const plan = new THREE.Mesh(PlaneGeometry, MeshLambertMaterial)
-                plan.rotation.x = -0.5 * Math.PI
-                plan.receiveShadow = true
-                this.scene.add(plan)
                 // 环境光源
                 // const AmbientLight = new THREE.AmbientLight('#fff', .5)
                 // AmbientLight.receiveShadow = true
@@ -296,7 +288,6 @@ export const useModelsStore = defineStore('app', {
                     mesh.castShadow = true;
                     mesh.receiveShadow = true;
                     this.scene.add(mesh);
-
                 });
 
 
@@ -306,7 +297,7 @@ export const useModelsStore = defineStore('app', {
 
         },
         // 第三人称视角跟随函数 - 跟随物体
-        updateThirdPersonCamera(character: THREE.Mesh) {
+        updateThirdPersonCamera(character: THREE.Group) {
             // 计算相机在角色局部坐标系中的目标位置
             // 这个位置在角色后方(distance)和上方(height)
             const targetLocalPosition = new THREE.Vector3(
@@ -332,46 +323,121 @@ export const useModelsStore = defineStore('app', {
 
             this.camera.lookAt(lookAtPosition);
         },
+        /**
+         * 初始化平行光
+         * @param position 光源位置
+         * @param target 照向位置
+         */
+        initDirectionalLight(position: THREE.Vector3, color = '#ff0000', target: THREE.Vector3 = new THREE.Vector3(0, 0, 0)) {
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(position.x, position.y, position.z);
+            directionalLight.castShadow = true;
+            // 提高阴影贴图分辨率（值越大越清晰，但性能消耗越高）
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+
+            // 调整阴影相机的可视范围（控制阴影覆盖区域）
+            directionalLight.shadow.camera.near = 5;    // 近平面
+            directionalLight.shadow.camera.far = 500;   // 远平面
+            directionalLight.shadow.camera.left = -100; // 左边界
+            directionalLight.shadow.camera.right = 100; // 右边界
+            directionalLight.shadow.camera.top = 100;   // 上边界
+            directionalLight.shadow.camera.bottom = -100; // 下边界
+
+            directionalLight.target.position.set(target.x, target.y, target.z);
+            this.scene.add(directionalLight);
+
+            // 平行光辅助器
+            const helper = new THREE.DirectionalLightHelper(directionalLight, 5, color);
+            this.scene.add(helper);
+        },
+        // 初始化网格线辅助
+        initGridHelper() {
+            // 添加网格线辅助（可选，用于调试或网格效果）
+            const gridHelper = new THREE.GridHelper(800, 80, '#000000', '#000000');
+            gridHelper.position.y = 0.01; // 稍微高于地板避免Z轴冲突
+            this.scene.add(gridHelper);
+        },
+        // 初始化地板
+        initPlaneGeometry() {
+            // 地板 - 可以反光的地板
+            const PlaneGeometry = new THREE.PlaneGeometry(800, 800)
+            const MeshLambertMaterial = new THREE.MeshLambertMaterial({ color: '#f2f5f9' })
+            const plan = new THREE.Mesh(PlaneGeometry, MeshLambertMaterial)
+            plan.rotation.x = -0.5 * Math.PI
+            plan.receiveShadow = true
+            this.scene.add(plan)
+        },
+        // 初始化灯光
+        initLight() {
+            this.light.intensity = 6999
+            this.light.position.set(0, 60, 0);
+            this.light.visible = true
+            this.light.castShadow = true;
+            this.group.add(this.light);
+            this.group.add(new THREE.PointLightHelper(this.light)) // 光源辅助器
+            this.scene.add(this.group);
+        },
+        // 初始化坐标轴辅助器
+        initAxesHelper() {
+            const axesHelper = new THREE.AxesHelper(100);
+            axesHelper.position.set(0, 0.2, 0)
+            this.scene.add(axesHelper);
+        },
+        // 初始化锥体几何体（方向指示器）
+        initConeGeometry() {
+            // 方向指示器（前端的小三角）
+            const indicatorGeometry = new THREE.ConeGeometry(0.5, 2, 3);
+            const indicatorMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            const indicator = new THREE.Mesh(indicatorGeometry, indicatorMaterial);
+            indicator.position.z = -3; // 放在组的前端（-Z方向为前方）
+            indicator.rotation.x = Math.PI / 2;
+            this.group.add(indicator);
+        },
+        // 初始化运动方向
+        initMotion() {
+            // 计算前后方向的辅助向量
+            const ws = new THREE.Vector3(0, 0, 1); // 局部Z轴正方向为前方
+
+            // 计算左右方向的辅助向量
+            const ad = new THREE.Vector3(1, 0, 0); // 局部x轴负方向为左方
+
+            // 将局部前进方向转换为世界空间方向
+            this.moveDirection_ws.copy(ws).applyQuaternion(this.group.quaternion);
+            this.moveDirection_ad.copy(ad).applyQuaternion(this.group.quaternion);
+        },
+        // 初始化模型
+        async initModels() {
+            await Promise.all(this.models.map(this.loadModels));
+            this.scene.add(this.group);
+        },
+        // 渲染模型
         async renderModels() {
             this.models.forEach(mod => {
                 mod.mixer?.update(this.clock.getDelta())
             })
 
+            // 根据按键状态更新位置和旋转
+            if ([1, 4, 5, 6].includes(this.checkKey)) this.initMotion()
             // 按下w奔跑
             if (this.checkKey == 1) { // w
-                this.models[0]?.model?.position?.set(
-                    this.models[0]?.model.position.x,
-                    this.models[0]?.model.position.y,
-                    this.models[0]?.model.position.z + 1
-                )
+                this.group.position.add(this.moveDirection_ws.multiplyScalar(1));
             }
             if (this.checkKey == 4) { // a
-                this.models[0]?.model?.position?.set(
-                    this.models[0]?.model.position.x + 1,
-                    this.models[0]?.model.position.y,
-                    this.models[0]?.model.position.z
-                )
+                this.group.position.add(this.moveDirection_ad.multiplyScalar(1));
             }
             if (this.checkKey == 5) {// s
-                this.models[0]?.model?.position?.set(
-                    this.models[0]?.model.position.x,
-                    this.models[0]?.model.position.y,
-                    this.models[0]?.model.position.z - 1
-                )
+                this.group.position.add(this.moveDirection_ws.multiplyScalar(-1));
             }
             if (this.checkKey == 6) { // d
-                this.models[0]?.model?.position?.set(
-                    this.models[0]?.model.position.x - 1,
-                    this.models[0]?.model.position.y,
-                    this.models[0]?.model.position.z
-                )
+                this.group.position.add(this.moveDirection_ad.multiplyScalar(-1));
             }
 
-            // 相机跟随模型
-            this.models[0]?.model && this.updateThirdPersonCamera(this.models[0]?.model)
+            // 相机跟随
+            this.group && this.updateThirdPersonCamera(this.group)
 
-            // 灯光跟随模型
-            this.models[0]?.model && this.light.position.set(this.models[0]?.model.position.x, 60, this.models[0]?.model.position.z);
+            // 平滑过渡到目标角度（使用 lerp 实现平滑插值）
+            this.group.rotation.y = THREE.MathUtils.lerp(this.group.rotation.y, -this.targetRotationY, this.rotateSpeed);
 
 
             this.renderer?.render(
@@ -380,9 +446,8 @@ export const useModelsStore = defineStore('app', {
             );
             this.stats.update()
         },
-        async initModels() {
-            await Promise.all(this.models.map(this.loadModels));
-        },
+
+        // 加载模型
         loadModels(model: Model): Promise<THREE.Object3D> {
             return new Promise(async (resolve) => {
                 model.model = await this.loader.loadAsync(
@@ -394,9 +459,7 @@ export const useModelsStore = defineStore('app', {
                 );
                 model.model.castShadow = true;
                 model.model.receiveShadow = true;
-
                 model.model.scale.set(...model.scale)
-                model.model.position.set(...model.position)
 
                 model.mixer = new THREE.AnimationMixer(model.model)
                 model.model.animations.forEach((item: THREE.AnimationClip, idx: number) => {
@@ -421,14 +484,15 @@ export const useModelsStore = defineStore('app', {
                         model.actions[key.index] = (model.mixer as THREE.AnimationMixer).clipAction(item)
                     })
                 })
-                // model.actions.forEach(item => item.play())
+                // 初始化动作
                 model.actions[0]?.play()
-                this.scene.add(model.model);
+                // 加入Group
+                this.group.add(model.model);
                 resolve(model.model);
             });
         },
         async setAnimations(index: number, idx: number) {
-            console.log('setAnimations:', index, idx)
+            // console.log('setAnimations:', index, idx)
             this.checkKey = idx
             this.models[index]?.actions.forEach((actions, i) => {
                 if (idx !== i) {
