@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2024-05-23 23:55:32
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-25 15:22:07
+ * @LastEditTime : 2025-10-26 11:58:24
  * @FilePath     : /model-rendering/src/store/modules/models.ts
  * @Description  : filename
  *
@@ -15,20 +15,12 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { toRaw } from "vue";
 import Stats from 'three/addons/libs/stats.module.js';
 import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+import type { Model, Building } from './types';
 
-interface Model {
-    progress: number;
-    key: string;
-    url: string;
-    model: null | any;
-    mixer: null | THREE.AnimationMixer,
-    position: number[],
-    scale: number[],
-    actions: THREE.AnimationAction[]
-}
 export const useModelsStore = defineStore('app', {
     state: () => ({
-        loader: new FBXLoader(),
+        FBXLoader: new FBXLoader(),
+        PLYLoader: new PLYLoader(),
         renderer: new THREE.WebGLRenderer({ antialias: true }),
         scene: new THREE.Scene(),
         camera: new THREE.PerspectiveCamera(),
@@ -86,6 +78,7 @@ export const useModelsStore = defineStore('app', {
             //     actions: []
             // },
         ] as Model[],
+        // 动作列表
         keys: [
             {
                 key: 'q',
@@ -166,7 +159,17 @@ export const useModelsStore = defineStore('app', {
                 url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Samba Dancing.fbx'
             }
         ] as any[],
-        checkKey: 0
+        // 执行动作
+        checkKey: 0,
+        buildings: [
+            {
+                progress: 0,
+                key: 'Lucy100k',
+                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Lucy100k.ply',
+                position: [50, 19, 50],
+                scale: [0.024, 0.024, 0.024],
+            }
+        ] as Building[],
     }),
     getters: {
     },
@@ -178,15 +181,10 @@ export const useModelsStore = defineStore('app', {
             this.stats.dom.style.top = '0'
             this.stats.dom.style.bottom = '0'
 
-            await Promise.all(this.keys.map((k) => {
-                return new Promise(async (resolve) => {
-                    k.instancs = await this.loader.loadAsync(k.url, (event: ProgressEvent) => {
-                        k.progress =
-                            Math.round((event.loaded / event.total) * 100 * 100) / 100;
-                    })
-                    resolve(null)
-                })
-            }))
+            // 初始化建筑物
+            this.initBuilding()
+
+            // 初始化场景元素
             // this.initAxesHelper()
             // this.initConeGeometry()
             this.initLight()
@@ -272,28 +270,27 @@ export const useModelsStore = defineStore('app', {
                 const controls = new OrbitControls(this.camera, this.renderer.domElement);
                 controls.update();
 
-                new PLYLoader().load('https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Lucy100k.ply', (geometry) => {
-
-                    geometry.scale(0.024, 0.024, 0.024);
-                    geometry.computeVertexNormals();
-
-                    const material = new THREE.MeshLambertMaterial();
-
-                    const mesh = new THREE.Mesh(geometry, material);
-                    // mesh.rotateY(60)
-                    mesh.position.y = 19;
-                    mesh.position.x = 50;
-                    mesh.position.z = 50;
-
-                    mesh.castShadow = true;
-                    mesh.receiveShadow = true;
-                    this.scene.add(mesh);
-                });
-
-
                 this.initModels();
             }
 
+        },
+        // 初始化建筑物
+        initBuilding() {
+            this.buildings.forEach(async (building: Building) => {
+                building.model = await this.PLYLoader.loadAsync(building.url, (event: ProgressEvent) => {
+                    building.progress =
+                        Math.round((event.loaded / event.total) * 100 * 100) / 100;
+                });
+                building.model.scale(...building.scale);
+                building.model.computeVertexNormals();
+
+                const material = new THREE.MeshLambertMaterial();
+                const mesh = new THREE.Mesh(building.model, material);
+                mesh.position.set(...building.position);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                this.scene.add(mesh);
+            })
 
         },
         // 第三人称视角跟随函数 - 跟随物体
@@ -418,19 +415,21 @@ export const useModelsStore = defineStore('app', {
             })
 
             // 根据按键状态更新位置和旋转
-            if ([1, 4, 5, 6].includes(this.checkKey)) this.initMotion()
-            // 按下w奔跑
-            if (this.checkKey == 1) { // w
-                this.group.position.add(this.moveDirection_ws.multiplyScalar(1));
-            }
-            if (this.checkKey == 4) { // a
-                this.group.position.add(this.moveDirection_ad.multiplyScalar(1));
-            }
-            if (this.checkKey == 5) {// s
-                this.group.position.add(this.moveDirection_ws.multiplyScalar(-1));
-            }
-            if (this.checkKey == 6) { // d
-                this.group.position.add(this.moveDirection_ad.multiplyScalar(-1));
+            if ([1, 4, 5, 6].includes(this.checkKey)) {
+                this.initMotion()
+                // 按下w奔跑
+                if (this.checkKey == 1) { // w
+                    this.group.position.add(this.moveDirection_ws.multiplyScalar(1));
+                }
+                if (this.checkKey == 4) { // a
+                    this.group.position.add(this.moveDirection_ad.multiplyScalar(1));
+                }
+                if (this.checkKey == 5) {// s
+                    this.group.position.add(this.moveDirection_ws.multiplyScalar(-1));
+                }
+                if (this.checkKey == 6) { // d
+                    this.group.position.add(this.moveDirection_ad.multiplyScalar(-1));
+                }
             }
 
             // 相机跟随
@@ -448,9 +447,20 @@ export const useModelsStore = defineStore('app', {
         },
 
         // 加载模型
-        loadModels(model: Model): Promise<THREE.Object3D> {
+        async loadModels(model: Model): Promise<THREE.Object3D> {
+            // 加载模型动作
+            await Promise.all(this.keys.map((k) => {
+                return new Promise(async (resolve) => {
+                    k.instancs = await this.FBXLoader.loadAsync(k.url, (event: ProgressEvent) => {
+                        k.progress =
+                            Math.round((event.loaded / event.total) * 100 * 100) / 100;
+                    })
+                    resolve(null)
+                })
+            }))
+            // 加载主模型
             return new Promise(async (resolve) => {
-                model.model = await this.loader.loadAsync(
+                model.model = await this.FBXLoader.loadAsync(
                     model.url,
                     (event: ProgressEvent) => {
                         model.progress =
