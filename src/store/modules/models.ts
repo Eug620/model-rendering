@@ -2,7 +2,7 @@
  * @Author       : eug yyh3531@163.com
  * @Date         : 2024-05-23 23:55:32
  * @LastEditors  : eug yyh3531@163.com
- * @LastEditTime : 2025-10-26 11:58:24
+ * @LastEditTime : 2025-11-09 16:08:18
  * @FilePath     : /model-rendering/src/store/modules/models.ts
  * @Description  : filename
  *
@@ -16,6 +16,8 @@ import { toRaw } from "vue";
 import Stats from 'three/addons/libs/stats.module.js';
 import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
 import type { Model, Building } from './types';
+
+const baseUrl = 'https://bafybeigsscvy4giq24bc5rik2bnzymrof3br2urxadpcy7qk62csqrwglm.pinme.dev'
 
 export const useModelsStore = defineStore('app', {
     state: () => ({
@@ -52,7 +54,10 @@ export const useModelsStore = defineStore('app', {
                 // url: "/Dancing Twerk.fbx",
                 // url: "/Cheering.fbx",
                 // url:'/Dancing Twerk.fbx',
-                url: "https://unpkg.com/e-cdn@1.0.0/micro-vue/Cheering.fbx",
+
+                // url: "https://unpkg.com/e-cdn@1.0.0/micro-vue/Cheering.fbx",
+                url: baseUrl + "/role/Cheering.fbx",
+                
                 position: [0, 1, 0],
                 scale: [.15, .15, .15],
                 model: null,
@@ -85,78 +90,89 @@ export const useModelsStore = defineStore('app', {
                 index: 0,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Crazy Gesture.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Crazy Gesture.fbx',
+                url: baseUrl + "/actions/Crazy Gesture.fbx",
             },
             {
                 key: 'w',
                 index: 1,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/FastRun.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/FastRun.fbx',
+                url: baseUrl + "/actions/FastRun.fbx",
             },
             {
                 key: 'e',
                 index: 2,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Fighting Idle.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Fighting Idle.fbx',
+                url: baseUrl + "/actions/Fighting Idle.fbx",
             },
             {
                 key: 'r',
                 index: 3,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Hip Hop Dancing.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Hip Hop Dancing.fbx',
+                url: baseUrl + "/actions/Hip Hop Dancing.fbx",
             },
             {
                 key: 'a',
                 index: 4,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Standing Run Left.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Standing Run Left.fbx',
+                url: baseUrl + "/actions/Standing Run Left.fbx",
             },
             {
                 key: 's',
                 index: 5,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Running Backward.fbx'
-
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Running Backward.fbx',
+                url: baseUrl + "/actions/Running Backward.fbx",
             },
             {
                 key: 'd',
                 index: 6,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Right Strafe.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Right Strafe.fbx',
+                url: baseUrl + "/actions/Right Strafe.fbx",
             },
             {
                 key: 'f',
                 index: 7,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Whatever Gesture.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Whatever Gesture.fbx',
+                url: baseUrl + "/actions/Whatever Gesture.fbx",
             },
             {
                 key: 'z',
                 index: 8,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Praying.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Praying.fbx',
+                url: baseUrl + "/actions/Praying.fbx",
             },
             {
                 key: 'x',
                 index: 9,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Jab Cross.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Jab Cross.fbx',
+                url: baseUrl + "/actions/Jab Cross.fbx",
             },
             {
                 key: 'c',
                 index: 10,
                 instancs: null,
                 progress: 0,
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Samba Dancing.fbx'
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Samba Dancing.fbx',
+                url: baseUrl + "/actions/Samba Dancing.fbx",
+
             }
         ] as any[],
         // 执行动作
@@ -165,7 +181,8 @@ export const useModelsStore = defineStore('app', {
             {
                 progress: 0,
                 key: 'Lucy100k',
-                url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Lucy100k.ply',
+                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Lucy100k.ply',
+                url: baseUrl + "/buildings/lucy.ply",
                 position: [50, 19, 50],
                 scale: [0.024, 0.024, 0.024],
             }
