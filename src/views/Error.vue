@@ -3,7 +3,7 @@
  * @Date         : 2024-05-22 22:20:04
  * @LastEditors  : eug yyh3531@163.com
  * @LastEditTime : 2024-05-27 23:21:05
- * @FilePath     : /eug620.github.io/src/views/Error.vue
+ * @FilePath     : /ulnae.github.io/src/views/Error.vue
  * @Description  : filename
  * 
  * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 

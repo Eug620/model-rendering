@@ -3,7 +3,7 @@
  * @Date         : 2024-05-22 22:05:28
  * @LastEditors  : eug yyh3531@163.com
  * @LastEditTime : 2024-06-09 01:18:22
- * @FilePath     : /eug620.github.io/src/router/index.ts
+ * @FilePath     : /ulnae.github.io/src/router/index.ts
  * @Description  : filename
  * 
  * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 

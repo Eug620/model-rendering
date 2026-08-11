@@ -48,9 +48,9 @@ export const useModelsStore = defineStore('app', {
             {
                 progress: 0,
                 key: "Cheering",
-                // url: "//cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/character.fbx",
-                // url: "//cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Punching Bag.fbx",
-                // url: "//cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Cheering.fbx",
+                // url: "//cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/character.fbx",
+                // url: "//cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Punching Bag.fbx",
+                // url: "//cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Cheering.fbx",
                 // url: "/Dancing Twerk.fbx",
                 // url: "/Cheering.fbx",
                 // url:'/Dancing Twerk.fbx',
@@ -67,9 +67,9 @@ export const useModelsStore = defineStore('app', {
             // {
             //     progress: 0,
             //     key: "Dancing Twerk",
-            //     // url: "//cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/character.fbx",
-            //     // url: "//cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Punching Bag.fbx",
-            //     // url: "//cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Cheering.fbx",
+            //     // url: "//cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/character.fbx",
+            //     // url: "//cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Punching Bag.fbx",
+            //     // url: "//cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Cheering.fbx",
             //     // url: "/Dancing Twerk.fbx",
             //     // url: "/Cheering.fbx",
             //     // url:'/Dancing Twerk.fbx',
@@ -90,7 +90,7 @@ export const useModelsStore = defineStore('app', {
                 index: 0,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Crazy Gesture.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Crazy Gesture.fbx',
                 url: baseUrl + "/actions/Crazy Gesture.fbx",
             },
             {
@@ -98,7 +98,7 @@ export const useModelsStore = defineStore('app', {
                 index: 1,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/FastRun.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/FastRun.fbx',
                 url: baseUrl + "/actions/FastRun.fbx",
             },
             {
@@ -106,7 +106,7 @@ export const useModelsStore = defineStore('app', {
                 index: 2,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Fighting Idle.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Fighting Idle.fbx',
                 url: baseUrl + "/actions/Fighting Idle.fbx",
             },
             {
@@ -114,7 +114,7 @@ export const useModelsStore = defineStore('app', {
                 index: 3,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Hip Hop Dancing.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Hip Hop Dancing.fbx',
                 url: baseUrl + "/actions/Hip Hop Dancing.fbx",
             },
             {
@@ -122,7 +122,7 @@ export const useModelsStore = defineStore('app', {
                 index: 4,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Standing Run Left.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Standing Run Left.fbx',
                 url: baseUrl + "/actions/Standing Run Left.fbx",
             },
             {
@@ -130,7 +130,7 @@ export const useModelsStore = defineStore('app', {
                 index: 5,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Running Backward.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Running Backward.fbx',
                 url: baseUrl + "/actions/Running Backward.fbx",
             },
             {
@@ -138,7 +138,7 @@ export const useModelsStore = defineStore('app', {
                 index: 6,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Right Strafe.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Right Strafe.fbx',
                 url: baseUrl + "/actions/Right Strafe.fbx",
             },
             {
@@ -146,7 +146,7 @@ export const useModelsStore = defineStore('app', {
                 index: 7,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Whatever Gesture.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Whatever Gesture.fbx',
                 url: baseUrl + "/actions/Whatever Gesture.fbx",
             },
             {
@@ -154,7 +154,7 @@ export const useModelsStore = defineStore('app', {
                 index: 8,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Praying.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Praying.fbx',
                 url: baseUrl + "/actions/Praying.fbx",
             },
             {
@@ -162,7 +162,7 @@ export const useModelsStore = defineStore('app', {
                 index: 9,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Jab Cross.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Jab Cross.fbx',
                 url: baseUrl + "/actions/Jab Cross.fbx",
             },
             {
@@ -170,7 +170,7 @@ export const useModelsStore = defineStore('app', {
                 index: 10,
                 instancs: null,
                 progress: 0,
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Samba Dancing.fbx',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Samba Dancing.fbx',
                 url: baseUrl + "/actions/Samba Dancing.fbx",
 
             }
@@ -181,7 +181,7 @@ export const useModelsStore = defineStore('app', {
             {
                 progress: 0,
                 key: 'Lucy100k',
-                // url: 'https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/Lucy100k.ply',
+                // url: 'https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/Lucy100k.ply',
                 url: baseUrl + "/buildings/lucy.ply",
                 position: [50, 19, 50],
                 scale: [0.024, 0.024, 0.024],
@@ -243,7 +243,7 @@ export const useModelsStore = defineStore('app', {
 
 
                 // 颜色每分钟变换一次
-                // fetch('https://cdn.jsdelivr.net/gh/eug620/Pics@master/micro-vue/colors.json').then(async res => {
+                // fetch('https://cdn.jsdelivr.net/gh/ulnae/Pics@master/micro-vue/colors.json').then(async res => {
                 //     const colors = await res.json() || []
                 //     if (!colors.length) return
                 //     setInterval(() => {
